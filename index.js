@@ -35,10 +35,27 @@ async function run() {
 
     const userCollection = client.db("DecoDelight").collection("users");
     const productCollection = client.db("DecoDelight").collection("products");
+    const cartCollection = client.db("DecoDelight").collection("carts");
 
 
     // CRUD
     // Get data
+
+    // Users
+
+    app.get("/users", async (req, res) => {
+      const cursor = userCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get('/users/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await userCollection.findOne(query)
+      res.send(result);
+  });
+
 
     // Products
 
@@ -54,6 +71,57 @@ async function run() {
         const query = { _id: new ObjectId(id) }
         const result = await productCollection.findOne(query)
         res.send(result);
+    });
+
+
+    // Cart
+
+    
+    app.get("/carts", async (req, res) => {
+      const email = req.query.email;
+      const query = { email : email};
+      const cursor = cartCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get('/carts/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await cartCollection.findOne(query)
+      res.send(result);
+  });
+
+
+
+     // Post Data
+
+    // Users
+
+    app.post("/users", async(req, res) => {
+      const user = req.body;
+      const result = await userCollection.insertOne(user);
+      res.send(result);
+    });
+
+    // Cart
+
+    
+    app.post("/carts", async(req, res) => {
+      const cartItem = req.body;
+      const result = await cartCollection.insertOne(cartItem);
+      res.send(result);
+    });
+
+
+    // Delete
+    // Cart
+
+    app.delete("/carts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await cartCollection.deleteOne(query);
+      res.send(result);
     });
 
 
