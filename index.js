@@ -36,6 +36,7 @@ async function run() {
     const userCollection = client.db("DecoDelight").collection("users");
     const productCollection = client.db("DecoDelight").collection("products");
     const cartCollection = client.db("DecoDelight").collection("carts");
+    const reviewCollection = client.db("DecoDelight").collection("reviews");
 
 
     // CRUD
@@ -93,6 +94,23 @@ async function run() {
   });
 
 
+  // Reviews
+
+  app.get("/reviews", async (req, res) => {
+    const cursor = reviewCollection.find();
+    const result = await cursor.toArray();
+    res.send(result);
+  });
+
+  app.get('/reviews/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) }
+    const result = await reviewCollection.findOne(query)
+    res.send(result);
+});
+
+  
+
 
      // Post Data
 
@@ -110,6 +128,16 @@ async function run() {
     app.post("/carts", async(req, res) => {
       const cartItem = req.body;
       const result = await cartCollection.insertOne(cartItem);
+      res.send(result);
+    });
+
+
+    // Reviews
+
+    
+    app.post("/reviews", async(req, res) => {
+      const user = req.body;
+      const result = await reviewCollection.insertOne(user);
       res.send(result);
     });
 
